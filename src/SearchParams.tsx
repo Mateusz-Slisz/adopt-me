@@ -1,7 +1,8 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
+import { Theme, useTheme } from "./ThemeContext";
+import { PetType } from "./Pet";
 import useBreedList from "./useBreedList";
 import Results from "./Results";
-import { Theme, useTheme } from "./ThemeContext";
 
 const ANIMALS = ["bird", "cat", "dog", "rabbit", "dino"];
 
@@ -9,7 +10,7 @@ const SearchParams = () => {
   const [location, setLocation] = useState("Seattle, WA");
   const [animal, setAnimal] = useState("");
   const [breed, setBreed] = useState("");
-  const [pets, setPets] = useState([]);
+  const [pets, setPets] = useState<PetType[]>([]);
   const [breeds] = useBreedList(animal);
   const { theme, setTheme } = useTheme();
 
@@ -24,7 +25,7 @@ const SearchParams = () => {
 
   useEffect(() => {
     requestPets();
-  }, [animal]);
+  }, []);
 
   return (
     <div className="search-params">
@@ -79,11 +80,13 @@ const SearchParams = () => {
           ThemeContext
           <select
             value={theme}
-            onChange={(e) => setTheme(Theme[e.target.value])}
-            onBlur={(e) => setTheme(Theme[e.target.value])}
+            onChange={(e) => setTheme(e.target.value as Theme)}
+            onBlur={(e) => setTheme(e.target.value as Theme)}
           >
-            {Object.keys(Theme).map((key) => (
-              <option value={Theme[key]}>{key}</option>
+            {Object.entries(Theme).map(([key, value]) => (
+              <option value={value} key={value}>
+                {key}
+              </option>
             ))}
           </select>
         </label>

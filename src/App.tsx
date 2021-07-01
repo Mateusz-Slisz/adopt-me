@@ -1,9 +1,9 @@
-import { StrictMode, useState } from "react";
-import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import { StrictMode, useState } from "react";
+import { ThemeContext, Theme } from "./ThemeContext";
+import ReactDOM from "react-dom";
 import SearchParams from "./SearchParams";
 import Details from "./Details";
-import { ThemeContext, Theme } from "./ThemeContext";
 
 const App = () => {
   const [theme, setTheme] = useState(Theme.DarkBlue);

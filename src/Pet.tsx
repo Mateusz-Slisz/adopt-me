@@ -1,20 +1,35 @@
 import { Link } from "react-router-dom";
 
-const Pet = ({ name, animal, breed, images, location, id }) => {
-  let hero = "http://pets-images.dev-apis.com/pets/none.jpg";
+export type PetType = {
+  id: string;
+  animal: string;
+  name: string;
+  breed: string;
+  images: string[];
+  city: string;
+  state: string;
+  description: string;
+};
 
-  if (images.length) {
-    hero = images[0];
+type PetProps = {
+  pet: PetType;
+};
+
+const Pet = ({ pet }: PetProps) => {
+  let heroImage = "http://pets-images.dev-apis.com/pets/none.jpg";
+
+  if (pet.images.length) {
+    heroImage = pet.images[0];
   }
 
   return (
-    <Link to={`/details/${id}`} className="pet">
+    <Link to={`/details/${pet.id}`} className="pet">
       <div className="image-container">
-        <img src={hero} alt={name} />
+        <img src={heroImage} alt={pet.name} />
       </div>
       <div className="info">
-        <h1>{name}</h1>
-        <h2>{`${animal} - ${breed} - ${location}`}</h2>
+        <h1>{pet.name}</h1>
+        <h2>{`${pet.animal} - ${pet.breed} - ${pet.city}, ${pet.state}`}</h2>
       </div>
     </Link>
   );

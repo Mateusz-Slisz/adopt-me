@@ -1,31 +1,25 @@
-import { useContext } from "react";
 import { withRouter } from "react-router";
+import { useEffect, useState } from "react";
+import { PetType } from "./Pet";
+import { useTheme } from "./ThemeContext";
+import { RouteComponentProps } from "react-router";
 import Carousel from "./Carousel";
 import ErrorBoundary from "./ErrorBoundary";
-import { useTheme } from "./ThemeContext";
 import Modal from "./Modal";
-import { useEffect, useState } from "react";
 
-type Pet = {
+type MatchParams = {
   id: string;
-  animal: string;
-  name: string;
-  breed: string;
-  images: string[];
-  city: string;
-  state: string;
-  description: string;
 };
 
-const Details = (props) => {
+const Details = ({ match }: RouteComponentProps<MatchParams>) => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [pet, setPet] = useState<Pet | undefined>(undefined);
+  const [pet, setPet] = useState<PetType | undefined>(undefined);
   const { theme } = useTheme();
 
   const requestPetData = async () => {
     const res = await fetch(
-      `http://pets-v2.dev-apis.com/pets?id=${props.match.params.id}`
+      `http://pets-v2.dev-apis.com/pets?id=${match.params.id}`
     );
     const json = await res.json();
 
@@ -35,13 +29,13 @@ const Details = (props) => {
 
   useEffect(() => {
     requestPetData();
-  });
+  }, []);
 
   const toogleModal = () => setShowModal(!showModal);
 
   const adopt = () => (window.location.href = "http://bit.ly/pet-adopt");
 
-  if (loading) {
+  if (loading || !pet) {
     return <h2>loading ...</h2>;
   }
 
