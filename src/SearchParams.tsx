@@ -1,18 +1,32 @@
 import { useState, useEffect } from "react";
 import { Theme, useTheme } from "./ThemeContext";
 import { PetType } from "./Pet";
+import { useForm } from "react-hook-form";
 import useBreedList from "./useBreedList";
 import Results from "./Results";
+
+type FormValues = {
+  location: string;
+  animal: string;
+  breed: string;
+};
+
+const FormDefaultValues = {
+  animal: "",
+  breed: "",
+  location: "Seattle, WA",
+};
 
 const ANIMALS = ["bird", "cat", "dog", "rabbit", "dino"];
 
 const SearchParams = () => {
-  const [location, setLocation] = useState("Seattle, WA");
-  const [animal, setAnimal] = useState("");
-  const [breed, setBreed] = useState("");
   const [pets, setPets] = useState<PetType[]>([]);
-  const [breeds] = useBreedList(animal);
+  const { register, watch, handleSubmit } = useForm<FormValues>({
+    defaultValues: FormDefaultValues,
+  });
+  const [location, animal, breed] = watch(["location", "animal", "breed"]);
   const { theme, setTheme } = useTheme();
+  const [breeds] = useBreedList(animal);
 
   const requestPets = async () => {
     const res = await fetch(
@@ -30,28 +44,21 @@ const SearchParams = () => {
   return (
     <div className="search-params">
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
+        onSubmit={handleSubmit(() => {
           requestPets();
-        }}
+        })}
       >
         <label htmlFor="location">
           Location
           <input
+            {...register("location")}
             id="location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
             placeholder="Location"
           />
         </label>
         <label htmlFor="animal">
           Animal
-          <select
-            id="animal"
-            value={animal}
-            onChange={(e) => setAnimal(e.target.value)}
-            onBlur={(e) => setAnimal(e.target.value)}
-          >
+          <select {...register("animal")} id="animal">
             <option />
             {ANIMALS.map((animal) => (
               <option value={animal} key={animal}>
@@ -62,12 +69,7 @@ const SearchParams = () => {
         </label>
         <label htmlFor="breed">
           Breed
-          <select
-            id="breed"
-            value={breed}
-            onChange={(e) => setBreed(e.target.value)}
-            onBlur={(e) => setBreed(e.target.value)}
-          >
+          <select {...register("breed")} id="breed">
             <option />
             {breeds.map((breed) => (
               <option value={breed} key={breed}>
@@ -79,6 +81,7 @@ const SearchParams = () => {
         <label htmlFor="theme">
           ThemeContext
           <select
+            id="theme-context"
             value={theme}
             onChange={(e) => setTheme(e.target.value as Theme)}
             onBlur={(e) => setTheme(e.target.value as Theme)}
